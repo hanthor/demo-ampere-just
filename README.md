@@ -1,66 +1,28 @@
-# AI Model Server Justfile
+#Battle Plan (Roadmap)
 
-This Justfile provides recipes for managing AI model servers using ramalama and llama.cpp on an Ampere system.
+## For the Ampere Demo
+- [] Use `ramalama --dryrun serve` and then strip out the Nvidia stuff for the Ampere Demo Llama Serve Just action
+- [] Make some "see how fast you can do this" stuff    
+    - [] `just demo-build-k8s` 
+    - [] `just demo-build-kernel`
+    - [] `just demo-build-chromium?`
+- [] Setup VSCode for Local AI
+    - [] Install Continue pointed at local Ramalama Quadlet?
+    - [] if that doesn't work just use ollama
 
-## Dependencies
 
-- [just](https://github.com/casey/just): A command runner for simplifying tasks.
-- [podman](https://podman.io/): A daemonless container engine (or use Docker).
-- [ramalama](https://...): A tool for managing AI models.
-- [jq](https://stedolan.github.io/jq/): A lightweight and flexible command-line JSON processor.
-- [fzf](https://github.com/junegunn/fzf): A command-line fuzzy finder (optional, for interactive model selection).
+## For Adding Ramalama Just actions to Ublue
+- [] Make a generic ramalama model picker for `ramalama serve` and `ramalama run` not just Ampere 
+- [] Can make a fully interactive command builder
+    - [] ramalama image picker `Intel-GPU`, `Vulkan`, `ROCM`, etc.
+    - [] model picker
+    - [] threads
+    - [] `ngl` - explain what that is `Full CPU`, `Full GPU`, or `both`
 
-## Setup
 
-1. Install dependencies:
-    - Follow the installation instructions for each dependency.
-2. Configure ramalama to access your models:
-    - Ensure ramalama is set up to manage your AI models correctly.
-3. Additional setup instructions:
-    - Configure environment variables and other necessary settings.
 
-## Environment Variables
+#Current Status
 
-- `model`: Default AI model (e.g., deepseek-r1:70b, llama2:7b, ollama://llama2:7b).
-- `threads`: Number of threads for llama.cpp (defaults to nproc / 2).
-
-## Usage
-
-- `just check`: Check Justfile syntax.
-- `just fix`: Fix Justfile syntax.
-- `just demo-llama-server <model> <threads>`: Start llama-server with the specified model and threads.
-- `just demo-deepseekserver`: Quick demo with deepseek-r1:70b.
-- `just demo-ai-server`: Interactive model selection and server start.
-
-## Example README.md (partial)
-
-```markdown
-# AI Model Server Justfile
-
-This Justfile provides recipes for managing AI model servers using ramalama and llama.cpp on an Ampere system.
-
-## Dependencies
-
-- [just](https://github.com/casey/just): A command runner for simplifying tasks.
-- [podman](https://podman.io/): A daemonless container engine (or use Docker).
-- [ramalama](https://...): A tool for managing AI models.
-- [jq](https://stedolan.github.io/jq/): A lightweight and flexible command-line JSON processor.
-- [fzf](https://github.com/junegunn/fzf): A command-line fuzzy finder (optional, for interactive model selection).
-
-## Setup
-
-1. Install dependencies:
-    - Follow the installation instructions for each dependency.
-2. Configure ramalama to access your models:
-    - Ensure ramalama is set up to manage your AI models correctly.
-3. Additional setup instructions:
-    - Configure environment variables and other necessary settings.
-
-## Usage
-
-- `just check`: Check Justfile syntax.
-- `just fix`: Fix Justfile syntax.
-- `just demo-llama-server <model> <threads>`: Start llama-server with the specified model and threads.
-- `just demo-deepseekserver`: Quick demo with deepseek-r1:70b.
-- `just demo-ai-server`: Interactive model selection and server start.
-```
+- `just demo-llama-serve` - hacked podman command to allow for changeing thread count and model. using Vulkan with all the nvidia args  (to show off the CPU)
+- `just demo-ai-server` - An interactive picker for a model and executes `demo-llama-server`
+- `just demo-deepseekserver` - running `deepseek`
