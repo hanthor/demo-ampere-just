@@ -20,31 +20,6 @@ command_exists () {
   command -v "$1" >/dev/null 2>&1
 }
 
-# Install a package using a suitable package manager
-install_package () {
-  local package="$1"
-  echo "$(timestamp) ${YELLOW}Attempting to install ${package}...${NC}"
-  if command_exists apt-get; then
-    sudo apt-get update && sudo apt-get install -y "$package"
-  elif command_exists yum; then
-    sudo yum install -y "$package"
-  elif command_exists dnf; then
-    sudo dnf install -y "$package"
-  elif command_exists brew; then
-    brew install "$package"
-  elif command_exists go; then # gum is often installed via Go
-    go install github.com/charmbracelet/gum@latest
-  else
-    echo "$(timestamp) ${RED}No suitable package manager or Go installation found to install ${package}. Please install it manually.${NC}"
-    exit 1
-  fi
-}
-
-# Check and install gum
-if ! command_exists gum; then
-  echo "$(timestamp) ${YELLOW}gum not found. Installing for beautiful output...${NC}"
-  install_package gum
-fi
 
 # Clone or pull the kernel source
 if [ ! -d "$KERNEL_SOURCE_DIR" ]; then

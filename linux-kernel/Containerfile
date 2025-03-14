@@ -1,15 +1,17 @@
-FROM ubuntu:latest
+FROM cgr.dev/chainguard/wolfi-base:latest
 
-RUN apt-get update && apt-get install -y \
+# Install necessary dependencies
+RUN apk update && apk add \
     git \
+    bison \
     make \
     gcc \
     flex \
     sudo \
     python3 \
-    python3-pip \
-    python3-venv \
-    && rm -rf /var/lib/apt/lists/*
+    py3-pip \
+    python3-dev \
+    go
 
 # Create a virtual environment
 RUN python3 -m venv /venv
@@ -18,11 +20,15 @@ RUN python3 -m venv /venv
 ENV PATH="/venv/bin:$PATH"
 
 # Install Python dependencies within the virtual environment
-RUN pip install rich gum pygments
+RUN pip install rich pygments
+
+# Install gum using go install and GOBIN
+RUN GOBIN=/usr/local/bin go install github.com/charmbracelet/gum@latest
+
+# Ensure gum is in the path.
+ENV PATH="/usr/local/bin:$PATH"
 
 WORKDIR /app
-
-VOLUME /kernel_source
 
 COPY build-kernel.py /app/
 
