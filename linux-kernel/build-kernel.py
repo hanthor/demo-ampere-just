@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import subprocess
-import shutil
 import os
 from datetime import datetime
 from rich.console import Console
@@ -23,40 +22,16 @@ custom_theme = Theme({
 console = Console(theme=custom_theme)
 
 KERNEL_SOURCE_DIR = "/linux-kernel"
-KERNEL_REPO = "https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git"
 
 def timestamp():
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-def clone_kernel():
-    if not os.path.isdir(KERNEL_SOURCE_DIR):
-        console.print(f"[{timestamp()}][success]Cloning kernel source (depth 1)...", style="success")
-        spinner_process = subprocess.Popen(["gum", "spin", "--spinner", "dots", "--title", "Cloning Kernel..."], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-
-        process = subprocess.Popen(
-            ["git", "clone", "--depth", "1", KERNEL_REPO, KERNEL_SOURCE_DIR],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True
-        )
-        process.wait()
-        spinner_process.terminate()
-
-        if process.returncode != 0:
-            error_output = process.stderr.read()
-            console.print(f"[{timestamp()}][error]Error cloning kernel:\n{error_output}", style="error")
-            exit(1)
-        else:
-            console.print(f"[{timestamp()}][success]Kernel source cloned successfully to {KERNEL_SOURCE_DIR}", style="success")
-    else:
-        console.print(f"[{timestamp()}][info]Kernel source directory {KERNEL_SOURCE_DIR} already exists.", style="info")
-
 def configure_kernel():
     console.print(f"[{timestamp()}][section]Configuring kernel...", style="section")
     try:
-        console.print(f"[{timestamp()}][info]Current working directory: {os.getcwd()}", style="info") #debug
+        console.print(f"[{timestamp()}][info]Current working directory: {os.getcwd()}", style="info")
         spinner_process = subprocess.Popen(["gum", "spin", "--spinner", "dots", "--title", "Configuring Kernel..."], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        process = subprocess.Popen(["make", "defconfig"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, cwd=KERNEL_SOURCE_DIR)
+        process = subprocess.Popen(["make", "clean", "&&", "make", "defconfig", "FORCE_UNSAFE_CONFIGURE=1"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, cwd=KERNEL_SOURCE_DIR, shell=True)
         stdout, stderr = process.communicate()
         spinner_process.terminate()
 
@@ -106,7 +81,6 @@ def install_modules():
 if __name__ == "__main__":
     console.print(f"[{timestamp()}][section]Starting Linux Kernel Build Process[/section]", style="section")
 
-    clone_kernel()
     configure_kernel()
     build_kernel()
     install_modules()

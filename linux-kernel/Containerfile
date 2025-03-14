@@ -1,9 +1,8 @@
 FROM cgr.dev/chainguard/wolfi-base:latest
 
-# Install necessary dependencies
+# Install necessary build dependencies
 RUN apk update && apk add \
     git \
-    bison \
     make \
     gcc \
     flex \
@@ -11,12 +10,13 @@ RUN apk update && apk add \
     python3 \
     py3-pip \
     python3-dev \
-    go
+    go \
+    bison \
+    bc \
+    perl
 
-# Create a virtual environment
+# Create a virtual environment (optional, for your script)
 RUN python3 -m venv /venv
-
-# Activate the virtual environment
 ENV PATH="/venv/bin:$PATH"
 
 # Install Python dependencies within the virtual environment
@@ -24,14 +24,18 @@ RUN pip install rich pygments
 
 # Install gum using go install and GOBIN
 RUN GOBIN=/usr/local/bin go install github.com/charmbracelet/gum@latest
-
-# Ensure gum is in the path.
 ENV PATH="/usr/local/bin:$PATH"
 
 WORKDIR /app
 
-COPY build-kernel.py /app/
+# Mount the kernel source directory (essential!)
+VOLUME /linux-kernel
 
+COPY build-kernel.py /app/
 RUN chmod +x /app/build-kernel.py
+
+# Set KBUILD flags
+ENV KBUILD_CFLAGS="-fPIE -fPIC"
+ENV KBUILD_LDFLAGS="-pie -fPIE -fPIC"
 
 CMD ["python3", "/app/build-kernel.py"]
