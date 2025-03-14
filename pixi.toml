@@ -1,0 +1,12 @@
+[project]
+authors = ["James Reilly <jreilly1821@gmail>"]
+channels = ["conda-forge"]
+name = "demo-ampere-just"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+rich = ">=13.9.4,<14"
+pygments = ">=2.19.1,<3"

@@ -1,2 +1,5 @@
 linux-kernel/linux-kernel/
 android_build
+# pixi environments
+.pixi
+*.egg-info
