@@ -10,7 +10,7 @@ import urllib.request
 console = Console()
 
 ANDROID_REPO = "https://android.googlesource.com/platform/manifest"
-ANDROID_VERSION = "android-14.0.0_r1"  # Example: Android 14
+ANDROID_VERSION = "android-15.0.0_r22"
 ANDROID_BUILD_DIR = "android_source"
 NUM_CORES = os.cpu_count() or 1  # Get CPU core count
 REPO_BIN_DIR = os.path.expanduser("~/.local/bin")
