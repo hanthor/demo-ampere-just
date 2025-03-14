@@ -15,9 +15,9 @@
 - [ ] Make a generic ramalama model picker for `ramalama serve` and `ramalama run` not just Ampere 
 - [ ] Can make a fully interactive command builder
     - [ ] ramalama image picker `Intel-GPU`, `Vulkan`, `ROCM`, etc.
-    - [] model picker
-    - [] threads
-    - [] `ngl` - explain what that is `Full CPU`, `Full GPU`, or `both`
+    - [ ] model picker
+    - [ ] threads
+    - [ ] `ngl` - explain what that is `Full CPU`, `Full GPU`, or `both`
 
 
 
