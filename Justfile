@@ -28,11 +28,11 @@ export ramalama_image := env("RAMALAMA_IMAGE", "quay.io/ramalama/vulkan:latest")
 
 demo-llama-server $ramalama_image=ramalama_image $model_source=model_source $model_name=model_name $threads=threads $ngl=ngl:
     #!/usr/bin/env bash
-    python3 ramalama-serve-ampere.py --image $ramalama_image --threads $threads --ngl $ngl $model_source://$model_name
+    python3 ./ramalama/ramalama-serve-ampere.py --image $ramalama_image --threads $threads --ngl $ngl $model_source://$model_name
 
 demo-deepseekserver:
     just demo-llama-server "ollama" "deepseek-r1:70b" "96"
 
 demo-ai-server $ramalama_image=ramalama_image $threads=threads $ngl=ngl:
     #!/usr/bin/env bash
-    python3 demo-ai-server.py --image $ramalama_image --threads $threads --ngl $ngl
+    python3 ./ramalama/demo-ai-server.py --image $ramalama_image --threads $threads --ngl $ngl

@@ -91,9 +91,11 @@ def main():
     print(modified_command)
 
     try:
-        subprocess.run(modified_command, shell=True, check=True)
+        subprocess.Popen(["xdg-open", "http://localhost:8080"])
+        subprocess.run(modified_command, shell=True)
     except subprocess.CalledProcessError as e:
         print(f"Error running podman: {e}")
+
 
 if __name__ == "__main__":
     main()

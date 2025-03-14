@@ -1,0 +1,31 @@
+FROM ubuntu:latest
+
+RUN apt-get update && apt-get install -y \
+    git \
+    make \
+    gcc \
+    flex \
+    sudo \
+    python3 \
+    python3-pip \
+    python3-venv \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create a virtual environment
+RUN python3 -m venv /venv
+
+# Activate the virtual environment
+ENV PATH="/venv/bin:$PATH"
+
+# Install Python dependencies within the virtual environment
+RUN pip install rich gum pygments
+
+WORKDIR /app
+
+VOLUME /kernel_source
+
+COPY build-kernel.py /app/
+
+RUN chmod +x /app/build-kernel.py
+
+CMD ["python3", "/app/build-kernel.py"]

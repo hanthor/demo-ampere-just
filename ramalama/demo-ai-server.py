@@ -3,9 +3,20 @@
 import subprocess
 import json
 import os
+import argparse
 
 def demo_ai_server():
     """Interactively select an AI model and start llama-server."""
+
+    parser = argparse.ArgumentParser(description="Interactively select an AI model and start llama-server.",
+                                     formatter_class=argparse.RawTextHelpFormatter)
+    parser.add_argument("--image", type=str, default=os.environ.get("ramalama_image", "quay.io/ramalama/vulkan:latest"),
+                        help="Docker image to use for llama-server (default: quay.io/ramalama/vulkan:latest, can also be set via RAMALAMA_IMAGE environment variable)")
+    parser.add_argument("--threads", type=int, default=None,
+                        help="Number of threads to use (default: number of cores / 2, can also be set via THREADS environment variable)")
+    parser.add_argument("--ngl", type=int, default=None,
+                        help="Number of layers to offload to GPU (default: 0, can also be set via NGL environment variable)")
+    args = parser.parse_args()
 
     try:
         # Get the list of models in JSON format using ramalama
@@ -123,7 +134,7 @@ def demo_ai_server():
         print("Error: Could not find selected model details in parsed model array.")
         return 1
 
-    threads = os.environ.get("threads")
+    threads = str(args.threads) if args.threads is not None else os.environ.get("threads")
     if not threads:
         try:
             nproc_output = subprocess.run(["nproc"], capture_output=True, text=True, check=True).stdout.strip()
@@ -132,13 +143,11 @@ def demo_ai_server():
         except (subprocess.CalledProcessError, ValueError, FileNotFoundError):
             threads = "4" # Default threads if nproc fails
 
-    ngl = os.environ.get("ngl")
+    ngl = str(args.ngl) if args.ngl is not None else os.environ.get("ngl")
     if not ngl:
         ngl = "0" # Default to 0 so to show off CPU
 
-    ramalama_image = os.environ.get("ramalama_image")
-    if not ramalama_image:
-        ramalama_image = "quay.io/ramalama/vulkan:latest" # Default to Vulkan
+    ramalama_image = args.image
 
     print(f"Starting llama-server with image: {ramalama_image} source: {selected_model_source}, model: {selected_model_name}, threads: {threads} ngl: {ngl}")
 
