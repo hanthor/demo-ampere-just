@@ -9,7 +9,6 @@ def main():
     parser.add_argument("model", help="Model to serve (e.g., huggingface://...)")
     parser.add_argument("--image", help="Image to use for the container")
     parser.add_argument("--authfile", help="Path of the authentication file")
-    parser.add_argument("--env", action="append", help="Environment variables to add to the running container (e.g., LLAMA_max_threads=6)")
     parser.add_argument("--device", help="Device to leak into the running container")
     parser.add_argument("-n", "--name", help="Name of container in which the Model will be run")
     parser.add_argument("--ngl", type=int, help="Number of layers to offload to the GPU, if available")
@@ -65,10 +64,6 @@ def main():
 
     if args.threads:
         ramalama_args.extend(["--env", f"LLAMA_ARG_THREADS={args.threads}"])
-
-    if args.env:
-        for env_var in args.env:
-            ramalama_args.extend(["--env", env_var])
 
     ramalama_args.append(args.model)
 
