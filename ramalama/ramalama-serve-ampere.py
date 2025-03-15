@@ -4,8 +4,6 @@ import subprocess
 import argparse
 import re
 
-# Runs a modified version of the ramalama serve command, removing GPU options and executing the podman command.
-
 def main():
     parser = argparse.ArgumentParser(description="Run ramalama serve, extract podman command, remove GPU options, and execute.")
     parser.add_argument("model", help="Model to serve (e.g., huggingface://...)")
@@ -36,9 +34,6 @@ def main():
     ramalama_args.extend(["serve"])
     if args.authfile:
         ramalama_args.extend(["--authfile", args.authfile])
-    if args.env:
-        for env_var in args.env:
-            ramalama_args.extend(["--env", env_var])
     if args.device:
         ramalama_args.extend(["--device", args.device])
     if args.name:
@@ -67,8 +62,13 @@ def main():
         ramalama_args.extend(["--generate", args.generate])
     if args.port:
         ramalama_args.extend(["-p", str(args.port)])
+
     if args.threads:
-        ramalama_args.extend(["--env", "LLAMA_ARG_THREADS={args.threads}"]) #Add threads to env vars.
+        ramalama_args.extend(["--env", f"LLAMA_ARG_THREADS={args.threads}"])
+
+    if args.env:
+        for env_var in args.env:
+            ramalama_args.extend(["--env", env_var])
 
     ramalama_args.append(args.model)
 
@@ -95,7 +95,6 @@ def main():
         subprocess.run(modified_command, shell=True)
     except subprocess.CalledProcessError as e:
         print(f"Error running podman: {e}")
-
 
 if __name__ == "__main__":
     main()
