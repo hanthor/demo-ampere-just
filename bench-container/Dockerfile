@@ -8,8 +8,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     gfortran \
     wget \
-	openssl \
-	libssl-dev \
+    libssl-dev \
+    ca-certificates \
     && rm -rf /var/lib/apt/lists/*  # Clean up apt cache
 
 # c-ray
