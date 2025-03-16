@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     wget \
     libssl-dev \
     ca-certificates \
+    libsdl1.2-dev \
     && rm -rf /var/lib/apt/lists/*  # Clean up apt cache
 
 # c-ray
