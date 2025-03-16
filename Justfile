@@ -40,3 +40,7 @@ _demo-llama-server $ramalama_image=ramalama_image $model_source=model_source $mo
 
 demo-deepseekserver:
     just _demo-llama-server "ollama" "deepseek-r1:70b" "96"
+
+demo-build-android:
+    #!/usr/bin/env bash
+    

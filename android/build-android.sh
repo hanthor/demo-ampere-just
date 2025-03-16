@@ -34,7 +34,7 @@ run_command() {
 
   if [[ -n "$cwd" ]]; then
     if [[ "$shell_opt" == "true" ]]; then
-      bash -c "$command" 2>&1 | tee >(while read line; do echo "$line"; done) || {
+      (cd "$cwd" && bash -c "$command") 2>&1 | tee >(while read line; do echo "$line"; done) || {
         echo -e "${COLOR_FAIL}[ERROR] Command failed${COLOR_ENDC}"
         exit 1
       }
@@ -95,16 +95,16 @@ download_android() {
 
   if [[ ! -d "$ANDROID_BUILD_DIR/.repo" ]]; then
     run_command "$REPO_PATH init -u $ANDROID_REPO -b $ANDROID_VERSION" "$ANDROID_BUILD_DIR"
-    run_command "$REPO_PATH sync -j $NUM_CORES" "$ANDROID_BUILD_DIR"
+    run_command "$REPO_PATH sync -j $NUM_CORES --no-tags --no-clone-bundle" "$ANDROID_BUILD_DIR"
   else
     echo -e "${COLOR_OKGREEN}[$(timestamp)] Repo already initialized. Syncing...${COLOR_ENDC}"
-    run_command "$REPO_PATH sync -j $NUM_CORES" "$ANDROID_BUILD_DIR"
+    run_command "$REPO_PATH sync -j $NUM_CORES --no-tags --no-clone-bundle" "$ANDROID_BUILD_DIR"
   fi
 }
 
 # Function to build Android
 build_android() {
-  run_command "source build/envsetup.sh" "$ANDROID_BUILD_DIR" "true"
+  run_command ". build/envsetup.sh" "$ANDROID_BUILD_DIR" "true"
   run_command "lunch aosp_arm64-userdebug" "$ANDROID_BUILD_DIR" "true" # change lunch target as needed.
   run_command "make -j $NUM_CORES" "$ANDROID_BUILD_DIR"
 }
