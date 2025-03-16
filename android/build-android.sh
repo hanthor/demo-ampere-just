@@ -7,6 +7,7 @@ ANDROID_BUILD_DIR="android_source"
 NUM_CORES=$(nproc || echo 1)  # Get CPU core count or default to 1
 REPO_BIN_DIR="$HOME/.local/bin"
 REPO_PATH="$REPO_BIN_DIR/repo"
+LAST_SYNC_FILE="../.$(basename "$ANDROID_BUILD_DIR")_last_sync"  # File to store the last sync timestamp
 
 # ANSI escape codes for colors
 COLOR_HEADER='\033[95m'
@@ -45,10 +46,10 @@ run_command() {
       }
     fi
   else
-      $command 2>&1 | tee >(while read line; do echo "$line"; done) || {
-        echo -e "${COLOR_FAIL}[ERROR] Command failed${COLOR_ENDC}"
-        exit 1
-      }
+    $command 2>&1 | tee >(while read line; do echo "$line"; done) || {
+      echo -e "${COLOR_FAIL}[ERROR] Command failed${COLOR_ENDC}"
+      exit 1
+    }
   fi
 }
 
@@ -89,22 +90,29 @@ download_android() {
   if [[ ! -d "$ANDROID_BUILD_DIR/.repo" ]]; then
     run_command "$REPO_PATH init -u $ANDROID_REPO -b $ANDROID_VERSION" "$ANDROID_BUILD_DIR"
     run_command "$REPO_PATH sync -j $NUM_CORES --no-tags --no-clone-bundle" "$ANDROID_BUILD_DIR"
+    date +"%Y-%m-%d" > "$ANDROID_BUILD_DIR/$LAST_SYNC_FILE"  # Record the sync date
   else
-    echo -e "${COLOR_OKGREEN}[$(timestamp)] Repo already initialized. Syncing...${COLOR_ENDC}"
-    run_command "$REPO_PATH sync -j $NUM_CORES --no-tags --no-clone-bundle" "$ANDROID_BUILD_DIR"
+    # Check if a sync was done today
+    if [[ -f "$ANDROID_BUILD_DIR/$LAST_SYNC_FILE" ]] && [[ $(date +"%Y-%m-%d") == $(cat "$ANDROID_BUILD_DIR/$LAST_SYNC_FILE") ]]; then
+      echo -e "${COLOR_OKGREEN}[$(timestamp)] Repo already synced today. Skipping sync...${COLOR_ENDC}"
+    else
+      echo -e "${COLOR_OKGREEN}[$(timestamp)] Syncing repo...${COLOR_ENDC}"
+      run_command "$REPO_PATH sync -j $NUM_CORES --no-tags --no-clone-bundle" "$ANDROID_BUILD_DIR"
+      date +"%Y-%m-%d" > "$ANDROID_BUILD_DIR/$LAST_SYNC_FILE"  # Update the sync date
+    fi
   fi
 }
 
 # Function to build Android
 build_android() {
     # First, run 'lunch' without arguments to see available options
-    run_command "" "$ANDROID_BUILD_DIR" "true"
+    run_command "lunch" "$ANDROID_BUILD_DIR" "true"
     echo -e "${COLOR_WARNING}[$(timestamp)] Please select a valid lunch combo from the list above.{COLOR_ENDC}"
     echo -e "${COLOR_WARNING}[$(timestamp)] Example:  lunch aosp_arm-eng{COLOR_ENDC}"
     read -r -p "Enter lunch combo: " LUNCH_COMBO
 
-  run_command "lunch $LUNCH_COMBO" "$ANDROID_BUILD_DIR" "true" # Use the user's choice.
-  run_command "make -j $NUM_CORES" "$ANDROID_BUILD_DIR"
+    run_command "lunch $LUNCH_COMBO" "$ANDROID_BUILD_DIR" "true" # Use the user's choice.
+    run_command "make -j $NUM_CORES" "$ANDROID_BUILD_DIR"
 }
 
 # Main script execution
@@ -112,9 +120,9 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
   echo -e "${COLOR_HEADER}[$(timestamp)] Starting Android build process...${COLOR_ENDC}"
   start_time=$(date +%s)
 
-  install_repo
-  download_android
-  build_android
+  install_repo()
+  download_android()
+  build_android()
 
   end_time=$(date +%s)
   elapsed_time=$((end_time - start_time))
