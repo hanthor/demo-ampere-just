@@ -68,7 +68,7 @@ def download_android():
         run_command([REPO_PATH, "sync", "-j", str(NUM_CORES)], cwd=ANDROID_BUILD_DIR)
 
 def build_android():
-    run_command(["source", "build/envsetup.sh"], cwd=ANDROID_BUILD_DIR, shell=True)
+    run_command("source build/envsetup.sh", cwd=ANDROID_BUILD_DIR, shell=True)
     run_command(["lunch", "aosp_arm64-userdebug"], cwd=ANDROID_BUILD_DIR, shell=True) # change lunch target as needed.
     run_command(["make", "-j", str(NUM_CORES)], cwd=ANDROID_BUILD_DIR)
 
