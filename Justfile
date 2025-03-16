@@ -1,4 +1,9 @@
-[group('Just')]
+demo-ai-server $ramalama_image=ramalama_image $threads=threads $ngl=ngl:
+    #!/usr/bin/env bash
+    python3 ./ramalama/demo-ai-server.py --image $ramalama_image --threads $threads --ngl $ngl
+[
+
+group('Just')]
 check:
     #!/usr/bin/bash
     echo "Checking syntax: Justfile"
@@ -32,7 +37,3 @@ demo-llama-server $ramalama_image=ramalama_image $model_source=model_source $mod
 
 demo-deepseekserver:
     just demo-llama-server "ollama" "deepseek-r1:70b" "96"
-
-demo-ai-server $ramalama_image=ramalama_image $threads=threads $ngl=ngl:
-    #!/usr/bin/env bash
-    python3 ./ramalama/demo-ai-server.py --image $ramalama_image --threads $threads --ngl $ngl
