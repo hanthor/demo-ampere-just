@@ -97,7 +97,13 @@ download_android() {
 
 # Function to build Android
 build_android() {
-  run_command "lunch aosp_arm64-userdebug" "$ANDROID_BUILD_DIR" "true" # change lunch target as needed.
+    # First, run 'lunch' without arguments to see available options
+    run_command "" "$ANDROID_BUILD_DIR" "true"
+    echo -e "${COLOR_WARNING}[$(timestamp)] Please select a valid lunch combo from the list above.{COLOR_ENDC}"
+    echo -e "${COLOR_WARNING}[$(timestamp)] Example:  lunch aosp_arm-eng{COLOR_ENDC}"
+    read -r -p "Enter lunch combo: " LUNCH_COMBO
+
+  run_command "lunch $LUNCH_COMBO" "$ANDROID_BUILD_DIR" "true" # Use the user's choice.
   run_command "make -j $NUM_CORES" "$ANDROID_BUILD_DIR"
 }
 
