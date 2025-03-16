@@ -62,10 +62,10 @@ def download_android():
 
     if not os.path.exists(os.path.join(ANDROID_BUILD_DIR, ".repo")):
         run_command([REPO_PATH, "init", "-u", ANDROID_REPO, "-b", ANDROID_VERSION], cwd=ANDROID_BUILD_DIR)
-        run_command([REPO_PATH, "sync", "-j", str(NUM_CORES)], cwd=ANDROID_BUILD_DIR)
+        run_command([REPO_PATH, "sync", "-j", 8], cwd=ANDROID_BUILD_DIR)
     else:
         print(f"{Colors.OKGREEN}[{timestamp()}] Repo already initialized. Syncing...{Colors.ENDC}")
-        run_command([REPO_PATH, "sync", "-j", str(NUM_CORES)], cwd=ANDROID_BUILD_DIR)
+        run_command([REPO_PATH, "sync", "-j", 8], cwd=ANDROID_BUILD_DIR)
 
 def build_android():
     run_command("source build/envsetup.sh", cwd=ANDROID_BUILD_DIR, shell=True)
