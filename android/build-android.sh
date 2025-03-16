@@ -95,10 +95,10 @@ download_android() {
 
   if [[ ! -d "$ANDROID_BUILD_DIR/.repo" ]]; then
     run_command "$REPO_PATH init -u $ANDROID_REPO -b $ANDROID_VERSION" "$ANDROID_BUILD_DIR"
-    run_command "$REPO_PATH sync -j 8" "$ANDROID_BUILD_DIR"
+    run_command "$REPO_PATH sync -j $NUM_CORES" "$ANDROID_BUILD_DIR"
   else
     echo -e "${COLOR_OKGREEN}[$(timestamp)] Repo already initialized. Syncing...${COLOR_ENDC}"
-    run_command "$REPO_PATH sync -j 8" "$ANDROID_BUILD_DIR"
+    run_command "$REPO_PATH sync -j $NUM_CORES" "$ANDROID_BUILD_DIR"
   fi
 }
 
