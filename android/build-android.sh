@@ -36,20 +36,27 @@ run_command() {
   if [[ -n "$cwd" ]]; then
     if [[ "$shell_opt" == "true" ]]; then
       (cd "$cwd" && { . ./build/envsetup.sh; $command; }) 2>&1 | tee >(while read line; do echo "$line"; done) || {
-        echo -e "${COLOR_FAIL}[ERROR] Command failed${COLOR_ENDC}"
-        exit 1
+          echo -e "${COLOR_FAIL}[ERROR] Command failed${COLOR_ENDC}"
+          exit 1
       }
     else
       (cd "$cwd" && $command) 2>&1 | tee >(while read line; do echo "$line"; done) || {
-        echo -e "${COLOR_FAIL}[ERROR] Command failed${COLOR_ENDC}"
-        exit 1
+            echo -e "${COLOR_FAIL}[ERROR] Command failed${COLOR_ENDC}"
+            exit 1
       }
     fi
   else
-    $command 2>&1 | tee >(while read line; do echo "$line"; done) || {
-      echo -e "${COLOR_FAIL}[ERROR] Command failed${COLOR_ENDC}"
-      exit 1
-    }
+    if [[ "$shell_opt" == "true" ]]; then
+       bash -c "$command" 2>&1 | tee >(while read line; do echo "$line"; done) || {
+            echo -e "${COLOR_FAIL}[ERROR] Command failed${COLOR_ENDC}"
+             exit 1
+       }
+    else
+      $command 2>&1 | tee >(while read line; do echo "$line"; done) || {
+          echo -e "${COLOR_FAIL}[ERROR] Command failed${COLOR_ENDC}"
+          exit 1
+      }
+    fi
   fi
 }
 
@@ -90,15 +97,15 @@ download_android() {
   if [[ ! -d "$ANDROID_BUILD_DIR/.repo" ]]; then
     run_command "$REPO_PATH init -u $ANDROID_REPO -b $ANDROID_VERSION" "$ANDROID_BUILD_DIR"
     run_command "$REPO_PATH sync -j $NUM_CORES --no-tags --no-clone-bundle" "$ANDROID_BUILD_DIR"
-    date +"%Y-%m-%d" > "$ANDROID_BUILD_DIR/$LAST_SYNC_FILE"  # Record the sync date
+    date +"%Y-%m-%d" > "$LAST_SYNC_FILE"  # Record the sync date
   else
     # Check if a sync was done today
-    if [[ -f "$ANDROID_BUILD_DIR/$LAST_SYNC_FILE" ]] && [[ $(date +"%Y-%m-%d") == $(cat "$ANDROID_BUILD_DIR/$LAST_SYNC_FILE") ]]; then
+    if [[ -f "$LAST_SYNC_FILE" ]] && [[ $(date +"%Y-%m-%d") == $(cat "$LAST_SYNC_FILE") ]]; then
       echo -e "${COLOR_OKGREEN}[$(timestamp)] Repo already synced today. Skipping sync...${COLOR_ENDC}"
     else
       echo -e "${COLOR_OKGREEN}[$(timestamp)] Syncing repo...${COLOR_ENDC}"
       run_command "$REPO_PATH sync -j $NUM_CORES --no-tags --no-clone-bundle" "$ANDROID_BUILD_DIR"
-      date +"%Y-%m-%d" > "$ANDROID_BUILD_DIR/$LAST_SYNC_FILE"  # Update the sync date
+      date +"%Y-%m-%d" > "$LAST_SYNC_FILE"  # Update the sync date
     fi
   fi
 }
@@ -120,9 +127,9 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
   echo -e "${COLOR_HEADER}[$(timestamp)] Starting Android build process...${COLOR_ENDC}"
   start_time=$(date +%s)
 
-  install_repo()
-  download_android()
-  build_android()
+  install_repo
+  download_android
+  build_android
 
   end_time=$(date +%s)
   elapsed_time=$((end_time - start_time))
