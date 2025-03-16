@@ -34,7 +34,7 @@ run_command() {
 
   if [[ -n "$cwd" ]]; then
     if [[ "$shell_opt" == "true" ]]; then
-      (cd "$cwd" && bash -c "$command") 2>&1 | tee >(while read line; do echo "$line"; done) || {
+      (cd "$cwd" && { . ./build/envsetup.sh; $command; }) 2>&1 | tee >(while read line; do echo "$line"; done) || {
         echo -e "${COLOR_FAIL}[ERROR] Command failed${COLOR_ENDC}"
         exit 1
       }
@@ -45,17 +45,10 @@ run_command() {
       }
     fi
   else
-    if [[ "$shell_opt" == "true" ]]; then
-      bash -c "$command" 2>&1 | tee >(while read line; do echo "$line"; done) || {
-        echo -e "${COLOR_FAIL}[ERROR] Command failed${COLOR_ENDC}"
-        exit 1
-      }
-    else
       $command 2>&1 | tee >(while read line; do echo "$line"; done) || {
         echo -e "${COLOR_FAIL}[ERROR] Command failed${COLOR_ENDC}"
         exit 1
       }
-    fi
   fi
 }
 
@@ -104,7 +97,6 @@ download_android() {
 
 # Function to build Android
 build_android() {
-  run_command ". build/envsetup.sh" "$ANDROID_BUILD_DIR" "true"
   run_command "lunch aosp_arm64-userdebug" "$ANDROID_BUILD_DIR" "true" # change lunch target as needed.
   run_command "make -j $NUM_CORES" "$ANDROID_BUILD_DIR"
 }
