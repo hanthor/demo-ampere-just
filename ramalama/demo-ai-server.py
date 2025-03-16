@@ -152,7 +152,7 @@ def demo_ai_server():
     print(f"Starting llama-server with image: {ramalama_image} source: {selected_model_source}, model: {selected_model_name}, threads: {threads} ngl: {ngl}")
 
     try:
-        subprocess.run(["just", "demo-llama-server", ramalama_image, selected_model_source, selected_model_name, threads, ngl], check=True, cwd=os.getcwd())
+        subprocess.run(["just", "_demo-llama-server", ramalama_image, selected_model_source, selected_model_name, threads, ngl], check=True, cwd=os.getcwd())
         print(f"Started llama-server with source: {selected_model_source}, model: {selected_model_name}.")
     except subprocess.CalledProcessError as e:
         print(f"Error: Failed to start llama-server using 'just demo-llama-server'.")

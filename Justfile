@@ -1,9 +1,11 @@
 demo-ai-server $ramalama_image=ramalama_image $threads=threads $ngl=ngl:
     #!/usr/bin/env bash
+    cd ~/demo
     python3 ./ramalama/demo-ai-server.py --image $ramalama_image --threads $threads --ngl $ngl
-[
 
-group('Just')]
+
+
+[group('Just')]
 check:
     #!/usr/bin/bash
     echo "Checking syntax: Justfile"
@@ -31,9 +33,10 @@ export threads := env("THREADS", `sh -c 'echo $(( $(nproc) / 2 ))'`)
 export ngl := env("NGL", "0")
 export ramalama_image := env("RAMALAMA_IMAGE", "quay.io/ramalama/vulkan:latest")
 
-demo-llama-server $ramalama_image=ramalama_image $model_source=model_source $model_name=model_name $threads=threads $ngl=ngl:
+_demo-llama-server $ramalama_image=ramalama_image $model_source=model_source $model_name=model_name $threads=threads $ngl=ngl:
     #!/usr/bin/env bash
+    cd ~/demo
     python3 ./ramalama/ramalama-serve-ampere.py --image $ramalama_image --threads $threads --ngl $ngl $model_source://$model_name
 
 demo-deepseekserver:
-    just demo-llama-server "ollama" "deepseek-r1:70b" "96"
+    just _demo-llama-server "ollama" "deepseek-r1:70b" "96"
