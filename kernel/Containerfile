@@ -1,0 +1,17 @@
+# Use Fedora 42 as the base image
+FROM fedora:42
+
+# Install necessary packages
+RUN sudo dnf -y install fedpkg ccache
+RUN fedpkg clone -a kernel -b f42 --depth 1
+WORKDIR /kernel
+RUN sudo dnf -y builddep kernel.spec
+
+# Install build dependencies
+RUN dnf -y builddep kernel.spec
+
+# Set the default command to bash for inspection
+CMD ["/bin/bash"]
+
+# Run the build 
+# RUN fedpkg local
