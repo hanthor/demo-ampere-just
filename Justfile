@@ -60,3 +60,8 @@ demo-benchmark-7zip:
 demo-open-btop:
     #!/usr/bin/env bash
     btop 
+
+demo-build-kernel:
+    #!/usr/bin/env bash
+    podman image  localhost/fedora-kernel || podman build -f kernel/Containerfile -t localhost/fedora-kernel 
+    podman run -it --rm localhost/fedora-kernel:latest fedpkg local
