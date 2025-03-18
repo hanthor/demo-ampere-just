@@ -26,3 +26,7 @@
 - `just demo-llama-serve` - hacked podman command to allow for changeing thread count and model. using Vulkan with all the nvidia args  (to show off the CPU)
 - `just demo-ai-server` - An interactive picker for a model and executes `demo-llama-server`
 - `just demo-deepseekserver` - running `deepseek`
+- `just --choose`
+
+# Local Testing
+    do local testing by doing `export SCRIPT_DIR` or doing something like `SCRIPT_DIR=. just demo-benchmark-sysbench`
