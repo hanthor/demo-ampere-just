@@ -1,4 +1,4 @@
-FROM fedora:44
+FROM fedora:45
 
 # Install basic build tools and dependencies
 RUN dnf install -y git rpm-build curl wget
