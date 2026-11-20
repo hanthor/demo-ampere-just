@@ -1,5 +1,5 @@
 # Use Fedora 42 as the base image
-FROM fedora:45
+FROM fedora:46
 
 # Install necessary packages
 RUN sudo dnf -y install fedpkg ccache
